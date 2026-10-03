@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { AuthContext } from '../context/AuthContext';
 import { styles } from '../styles/ProfileStyles';
 
@@ -38,10 +39,10 @@ const ProfileScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Text style={styles.backBtnText}>Voltar</Text>
+          <MaterialIcons name="arrow-back-ios" size={24} color="#1F2937" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Perfil</Text>
-        <View style={{width: 60}} />
+        <Text style={styles.headerTitle}>Meu Perfil</Text>
+        <View style={{width: 40}} />
       </View>
 
       <View style={styles.profileContainer}>
@@ -52,9 +53,9 @@ const ProfileScreen = ({ navigation }) => {
         <Text style={styles.email}>{user?.email}</Text>
 
         <View style={styles.apiSection}>
-          <Text style={styles.apiTitle}>Inspiração do Dia (API Externa)</Text>
+          <Text style={styles.apiTitle}>Inspiração do Dia</Text>
           {loadingQuote ? (
-            <ActivityIndicator size="small" color="#2196F3" />
+            <ActivityIndicator size="small" color="#10B981" style={{ marginVertical: 20 }}/>
           ) : (
             <View style={styles.quoteCard}>
               <Text style={styles.quoteText}>"{quote}"</Text>
@@ -62,12 +63,14 @@ const ProfileScreen = ({ navigation }) => {
             </View>
           )}
           <TouchableOpacity onPress={fetchQuote} style={styles.refreshBtn}>
+            <MaterialIcons name="refresh" size={20} color="#4F46E5" />
             <Text style={styles.refreshBtnText}>Nova Frase</Text>
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-          <Text style={styles.logoutBtnText}>Sair</Text>
+        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.8}>
+          <MaterialIcons name="logout" size={20} color="#EF4444" />
+          <Text style={styles.logoutBtnText}>Sair da Conta</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

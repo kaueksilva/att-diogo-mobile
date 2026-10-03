@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, SafeAreaView, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import { AuthContext } from '../context/AuthContext';
@@ -13,12 +14,14 @@ const TaskDetailScreen = ({ route, navigation }) => {
   const [description, setDescription] = useState(existingTask ? existingTask.description : '');
   const [location, setLocation] = useState(existingTask ? existingTask.location : null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [titleError, setTitleError] = useState('');
 
   const saveTask = async () => {
-    if (!title) {
-      Alert.alert('Erro', 'O título da tarefa é obrigatório.');
+    if (!title || title.trim().length === 0) {
+      setTitleError('O título da tarefa é obrigatório');
       return;
     }
+    setTitleError('');
 
     try {
       const storedTasksStr = await AsyncStorage.getItem('tasks_' + user.email);
@@ -78,55 +81,65 @@ const TaskDetailScreen = ({ route, navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Text style={styles.backBtnText}>Voltar</Text>
+          <MaterialIcons name="arrow-back-ios" size={24} color="#1F2937" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{existingTask ? 'Editar Tarefa' : 'Nova Tarefa'}</Text>
-        <View style={{width: 60}} />
+        <View style={{width: 40}} />
       </View>
 
-      <ScrollView style={styles.formContainer}>
-        <Text style={styles.label}>Título</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ex: Comprar leite"
-          value={title}
-          onChangeText={setTitle}
-        />
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{flex: 1}}
+      >
+        <ScrollView contentContainerStyle={styles.formContainer}>
+          <Text style={styles.label}>Título da Tarefa</Text>
+          <TextInput
+            style={[styles.input, titleError && styles.inputError]}
+            placeholder="Ex: Comprar leite"
+            value={title}
+            onChangeText={setTitle}
+            placeholderTextColor="#9CA3AF"
+          />
+          {titleError ? <Text style={styles.errorText}>{titleError}</Text> : null}
 
-        <Text style={styles.label}>Descrição</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          placeholder="Detalhes da tarefa..."
-          value={description}
-          onChangeText={setDescription}
-          multiline
-          numberOfLines={4}
-        />
+          <Text style={styles.label}>Descrição (Opcional)</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Detalhes da tarefa..."
+            value={description}
+            onChangeText={setDescription}
+            multiline
+            numberOfLines={4}
+            placeholderTextColor="#9CA3AF"
+          />
 
-        <Text style={styles.label}>Localização (Recurso Nativo)</Text>
-        <View style={styles.locationContainer}>
-          {location ? (
-            <Text style={styles.locationText}>
-              Lat: {location.latitude.toFixed(4)}, Lon: {location.longitude.toFixed(4)}
-            </Text>
-          ) : (
-            <Text style={styles.locationText}>Nenhuma localização anexada</Text>
-          )}
-          <TouchableOpacity 
-            style={styles.locationBtn} 
-            onPress={getLocation}
-            disabled={isLoadingLocation}
-          >
-            <Text style={styles.locationBtnText}>
-              {isLoadingLocation ? 'Buscando...' : 'Capturar GPS'}
-            </Text>
+          <Text style={styles.label}>Localização da Tarefa</Text>
+          <View style={styles.locationContainer}>
+            {location ? (
+              <Text style={styles.locationText}>
+                📍 Lat: {location.latitude.toFixed(4)}{'\n'}   Lon: {location.longitude.toFixed(4)}
+              </Text>
+            ) : (
+              <Text style={styles.locationText}>Nenhuma localização anexada a esta tarefa.</Text>
+            )}
+            <TouchableOpacity 
+              style={[styles.locationBtn, location && {backgroundColor: '#EF4444'}]} 
+              onPress={location ? () => setLocation(null) : getLocation}
+              disabled={isLoadingLocation}
+            >
+              <MaterialIcons name={location ? "location-off" : "my-location"} size={18} color="#FFFFFF" />
+              <Text style={styles.locationBtnText}>
+                {isLoadingLocation ? 'Buscando...' : (location ? 'Remover' : 'Capturar')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity style={styles.saveBtn} onPress={saveTask} activeOpacity={0.8}>
+            <MaterialIcons name="save" size={24} color="#FFFFFF" />
+            <Text style={styles.saveBtnText}>Salvar Tarefa</Text>
           </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity style={styles.saveBtn} onPress={saveTask}>
-          <Text style={styles.saveBtnText}>Salvar Tarefa</Text>
-        </TouchableOpacity>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

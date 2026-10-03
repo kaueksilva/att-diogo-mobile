@@ -1,18 +1,39 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { AuthContext } from '../context/AuthContext';
 import { styles } from '../styles/LoginStyles';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const { login } = useContext(AuthContext);
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos.');
-      return;
+  const validate = () => {
+    let isValid = true;
+    setEmailError('');
+    setPasswordError('');
+
+    if (!email) {
+      setEmailError('E-mail é obrigatório');
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError('E-mail inválido');
+      isValid = false;
     }
+
+    if (!password) {
+      setPasswordError('Senha é obrigatória');
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
+  const handleLogin = async () => {
+    if (!validate()) return;
 
     const success = await login(email, password);
     if (!success) {

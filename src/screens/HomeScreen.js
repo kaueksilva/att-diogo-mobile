@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
@@ -58,13 +59,13 @@ const HomeScreen = ({ navigation }) => {
           style={[styles.actionBtn, styles.editBtn]}
           onPress={() => navigation.navigate('TaskDetail', { task: item })}
         >
-          <Text style={styles.btnText}>Editar</Text>
+          <MaterialIcons name="edit" size={20} color="#D97706" />
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.actionBtn, styles.deleteBtn]}
           onPress={() => confirmDelete(item.id)}
         >
-          <Text style={styles.btnText}>Excluir</Text>
+          <MaterialIcons name="delete" size={20} color="#DC2626" />
         </TouchableOpacity>
       </View>
     </View>
@@ -83,6 +84,7 @@ const HomeScreen = ({ navigation }) => {
 
       {tasks.length === 0 ? (
         <View style={styles.emptyContainer}>
+          <MaterialIcons name="fact-check" size={64} color="#D1D5DB" />
           <Text style={styles.emptyText}>Nenhuma tarefa encontrada.</Text>
           <Text style={styles.emptySubText}>Clique no botão abaixo para adicionar uma.</Text>
         </View>
@@ -98,8 +100,9 @@ const HomeScreen = ({ navigation }) => {
       <TouchableOpacity 
         style={styles.fab}
         onPress={() => navigation.navigate('TaskDetail')}
+        activeOpacity={0.8}
       >
-        <Text style={styles.fabText}>+</Text>
+        <MaterialIcons name="add" size={32} color="#FFFFFF" />
       </TouchableOpacity>
     </SafeAreaView>
   );
