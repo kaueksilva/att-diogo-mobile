@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
@@ -10,13 +10,7 @@ const HomeScreen = ({ navigation }) => {
   const { user } = useContext(AuthContext);
   const isFocused = useIsFocused();
 
-  useEffect(() => {
-    if (isFocused) {
-      loadTasks();
-    }
-  }, [isFocused]);
-
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     try {
       const storedTasks = await AsyncStorage.getItem('tasks_' + user.email);
       if (storedTasks) {
@@ -25,7 +19,13 @@ const HomeScreen = ({ navigation }) => {
     } catch (e) {
       console.log('Error loading tasks', e);
     }
-  };
+  }, [user.email]);
+
+  useEffect(() => {
+    if (isFocused) {
+      loadTasks();
+    }
+  }, [isFocused, loadTasks]);
 
   const deleteTask = async (id) => {
     try {

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { ActivityIndicator, View } from 'react-native';
 
 import { AuthProvider, AuthContext } from './src/context/AuthContext';
@@ -12,7 +12,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import TaskDetailScreen from './src/screens/TaskDetailScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 const AppNav = () => {
   const { user, isLoading } = useContext(AuthContext);
