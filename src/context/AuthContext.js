@@ -25,6 +25,14 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      // Conta de teste padrão para facilitar o acesso sem cadastro
+      if (email === 'teste@teste.com' && password === '123456') {
+        const defaultUser = { email: 'teste@teste.com', name: 'Usuário Professor' };
+        await AsyncStorage.setItem('user', JSON.stringify(defaultUser));
+        setUser(defaultUser);
+        return true;
+      }
+
       const registeredUserStr = await AsyncStorage.getItem('registered_user_' + email);
       if (registeredUserStr) {
         const registeredUser = JSON.parse(registeredUserStr);
