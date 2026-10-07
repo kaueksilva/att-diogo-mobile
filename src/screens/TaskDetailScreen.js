@@ -203,7 +203,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
     if (weatherStatus === 'ready' && weather) {
       return (
         <View style={styles.weatherBox}>
-          <MaterialIcons name={weather.icon} size={32} color={colors.warning} />
+          <MaterialIcons name={weather.icon} size={28} color={colors.accent} />
           <Text style={styles.weatherTemp}>{weather.temperature}°C</Text>
           <View style={styles.weatherInfo}>
             <Text style={styles.weatherDesc}>{weather.description}</Text>
@@ -217,9 +217,9 @@ const TaskDetailScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <ScreenHeader
-        title={isEditing ? 'Editar Tarefa' : 'Nova Tarefa'}
+        title={isEditing ? 'Editar tarefa' : 'Nova tarefa'}
         onBack={() => navigation.goBack()}
       />
 
@@ -288,11 +288,11 @@ const TaskDetailScreen = ({ route, navigation }) => {
                 <Text style={styles.cardHint}>Anexe uma foto para lembrar de um detalhe importante.</Text>
                 <View style={styles.photoActions}>
                   <TouchableOpacity style={styles.photoActionBtn} onPress={() => pickPhoto(true)}>
-                    <MaterialIcons name="photo-camera" size={28} color={colors.primary} />
+                    <MaterialIcons name="photo-camera" size={20} color={colors.primary} />
                     <Text style={styles.photoActionText}>Câmera</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.photoActionBtn} onPress={() => pickPhoto(false)}>
-                    <MaterialIcons name="photo-library" size={28} color={colors.primary} />
+                    <MaterialIcons name="photo-library" size={20} color={colors.primary} />
                     <Text style={styles.photoActionText}>Galeria</Text>
                   </TouchableOpacity>
                 </View>
@@ -305,8 +305,8 @@ const TaskDetailScreen = ({ route, navigation }) => {
             <View style={styles.locationRow}>
               <MaterialIcons
                 name={location ? 'place' : 'location-off'}
-                size={28}
-                color={location ? colors.success : colors.textMuted}
+                size={24}
+                color={location ? colors.primary : colors.textMuted}
               />
               <View style={[styles.locationInfo, { marginLeft: 10 }]}>
                 {location ? (
@@ -341,7 +341,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
             {location ? (
               <>
                 <TouchableOpacity style={styles.mapLink} onPress={openInMaps}>
-                  <MaterialIcons name="map" size={18} color={colors.primary} />
+                  <MaterialIcons name="map" size={18} color={colors.accent} />
                   <Text style={styles.mapLinkText}>Abrir no mapa</Text>
                 </TouchableOpacity>
                 {renderWeather()}
@@ -353,8 +353,8 @@ const TaskDetailScreen = ({ route, navigation }) => {
             <View style={styles.card}>
               <View style={styles.statusRow}>
                 <MaterialIcons
-                  name={completed ? 'check-circle' : 'radio-button-unchecked'}
-                  size={28}
+                  name={completed ? 'check-box' : 'check-box-outline-blank'}
+                  size={26}
                   color={completed ? colors.success : colors.textMuted}
                 />
                 <View style={styles.statusInfo}>
@@ -372,7 +372,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
           ) : null}
 
           <PrimaryButton
-            title={isEditing ? 'Salvar Alterações' : 'Criar Tarefa'}
+            title={isEditing ? 'Salvar alterações' : 'Criar tarefa'}
             icon="save"
             onPress={handleSave}
             loading={isSaving}
@@ -381,7 +381,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
           {isEditing ? (
             <>
               <PrimaryButton
-                title="Excluir Tarefa"
+                title="Excluir tarefa"
                 icon="delete-outline"
                 variant="danger"
                 onPress={handleDelete}

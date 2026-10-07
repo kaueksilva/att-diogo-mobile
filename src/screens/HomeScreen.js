@@ -112,7 +112,7 @@ const HomeScreen = ({ navigation }) => {
         <EmptyState
           icon="playlist-add"
           title="Nenhuma tarefa ainda"
-          subtitle="Toque no botão + para criar sua primeira tarefa."
+          subtitle="Toque em “Nova tarefa” para cadastrar a primeira."
         />
       );
     }
@@ -129,12 +129,12 @@ const HomeScreen = ({ navigation }) => {
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 14 }]}>
         <View style={styles.headerInner}>
           <View style={styles.headerTop}>
             <View style={styles.greetingContainer}>
-              <Text style={styles.greeting} numberOfLines={1}>{getGreeting()}, {firstName}!</Text>
               <Text style={styles.date}>{today}</Text>
+              <Text style={styles.greeting} numberOfLines={1}>{getGreeting()}, {firstName}</Text>
             </View>
             <TouchableOpacity onPress={() => navigation.navigate('Profile')} accessibilityLabel="Abrir perfil">
               <View style={styles.profileBtn}>
@@ -217,12 +217,13 @@ const HomeScreen = ({ navigation }) => {
       )}
 
       <TouchableOpacity
-        style={[styles.fab, { bottom: insets.bottom + 24 }]}
+        style={[styles.fab, { bottom: insets.bottom + 20 }]}
         onPress={() => navigation.navigate('TaskDetail')}
         activeOpacity={0.8}
         accessibilityLabel="Nova tarefa"
       >
-        <MaterialIcons name="add" size={32} color={colors.white} />
+        <MaterialIcons name="add" size={22} color={colors.white} />
+        <Text style={styles.fabText}>Nova tarefa</Text>
       </TouchableOpacity>
     </View>
   );

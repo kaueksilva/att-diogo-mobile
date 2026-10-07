@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors, shadow, MAX_CONTENT_WIDTH } from '../theme/theme';
+import { colors, radius, MAX_CONTENT_WIDTH } from '../theme/theme';
 
 export const styles = StyleSheet.create({
   container: {
@@ -17,47 +17,50 @@ export const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   sectionLabel: {
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '600',
     color: colors.textBody,
-    marginBottom: 8,
+    marginBottom: 6,
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
   },
   priorityRow: {
     flexDirection: 'row',
-    marginHorizontal: -4,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface,
+    padding: 3,
   },
   priorityChip: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-    marginHorizontal: 4,
+    paddingVertical: 10,
+    borderRadius: radius.sm,
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
   priorityDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 8,
+    height: 8,
+    borderRadius: 2,
     marginRight: 8,
   },
   priorityText: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.textSecondary,
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 14,
+    borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.border,
     padding: 16,
     marginBottom: 20,
-    ...shadow(1, '#000', 0.05),
   },
   cardHint: {
     color: colors.textSecondary,
@@ -68,17 +71,17 @@ export const styles = StyleSheet.create({
   photo: {
     width: '100%',
     aspectRatio: 4 / 3,
-    borderRadius: 10,
+    borderRadius: radius.sm,
     backgroundColor: colors.background,
   },
   removePhotoBtn: {
     position: 'absolute',
     top: 8,
     right: 8,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    width: 34,
+    height: 34,
+    borderRadius: radius.sm,
+    backgroundColor: 'rgba(16,24,40,0.7)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -88,16 +91,20 @@ export const styles = StyleSheet.create({
   },
   photoActionBtn: {
     flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 18,
-    borderRadius: 12,
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.primaryBorder,
     backgroundColor: colors.primaryLight,
     marginHorizontal: 4,
   },
   photoActionText: {
     color: colors.primary,
-    fontWeight: '700',
-    marginTop: 6,
+    fontWeight: '600',
+    marginLeft: 8,
   },
   locationRow: {
     flexDirection: 'row',
@@ -108,7 +115,7 @@ export const styles = StyleSheet.create({
   },
   locationTitle: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.text,
   },
   locationCoords: {
@@ -119,10 +126,10 @@ export const styles = StyleSheet.create({
   locationBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.success,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 10,
+    backgroundColor: colors.primary,
+    paddingVertical: 9,
+    paddingHorizontal: 12,
+    borderRadius: radius.md,
     marginLeft: 12,
   },
   locationBtnRemove: {
@@ -130,8 +137,8 @@ export const styles = StyleSheet.create({
   },
   locationBtnText: {
     color: colors.white,
-    fontWeight: 'bold',
-    fontSize: 14,
+    fontWeight: '600',
+    fontSize: 13,
     marginLeft: 6,
   },
   mapLink: {
@@ -141,8 +148,8 @@ export const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   mapLinkText: {
-    color: colors.primary,
-    fontWeight: '700',
+    color: colors.accent,
+    fontWeight: '600',
     marginLeft: 4,
   },
   weatherBox: {
@@ -154,8 +161,8 @@ export const styles = StyleSheet.create({
     borderTopColor: colors.border,
   },
   weatherTemp: {
-    fontSize: 26,
-    fontWeight: '900',
+    fontSize: 22,
+    fontWeight: '700',
     color: colors.text,
     marginLeft: 12,
   },
@@ -165,7 +172,7 @@ export const styles = StyleSheet.create({
   },
   weatherDesc: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.textBody,
   },
   weatherMeta: {
@@ -183,7 +190,7 @@ export const styles = StyleSheet.create({
   },
   statusTitle: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.text,
   },
   statusHint: {
@@ -192,12 +199,13 @@ export const styles = StyleSheet.create({
     marginTop: 2,
   },
   deleteBtn: {
-    marginTop: 12,
+    marginTop: 10,
   },
   meta: {
     textAlign: 'center',
     color: colors.textMuted,
     fontSize: 12,
+    lineHeight: 18,
     marginTop: 20,
   },
 });

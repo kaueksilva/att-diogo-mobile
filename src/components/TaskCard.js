@@ -40,8 +40,8 @@ const TaskCard = ({ task, onPress, onToggle, onDelete }) => {
         accessibilityLabel={task.completed ? 'Marcar como pendente' : 'Marcar como concluída'}
       >
         <MaterialIcons
-          name={task.completed ? 'check-circle' : 'radio-button-unchecked'}
-          size={28}
+          name={task.completed ? 'check-box' : 'check-box-outline-blank'}
+          size={26}
           color={task.completed ? colors.success : colors.textMuted}
         />
       </TouchableOpacity>
@@ -57,10 +57,10 @@ const TaskCard = ({ task, onPress, onToggle, onDelete }) => {
         <View style={styles.badges}>
           <Badge icon="flag" label={priority.label} color={priority.color} background={priority.background} />
           {task.location ? (
-            <Badge icon="place" label="Local" color={colors.successDark} background={colors.successLight} />
+            <Badge icon="place" label="Local" color={colors.primary} background={colors.primaryLight} />
           ) : null}
           {task.photo ? (
-            <Badge icon="photo-camera" label="Foto" color={colors.primary} background={colors.primaryLight} />
+            <Badge icon="photo-camera" label="Foto" color={colors.accent} background={colors.primaryLight} />
           ) : null}
         </View>
       </View>
@@ -72,7 +72,7 @@ const TaskCard = ({ task, onPress, onToggle, onDelete }) => {
         onPress={() => onDelete(task)}
         accessibilityLabel="Excluir tarefa"
       >
-        <MaterialIcons name="delete-outline" size={20} color={colors.dangerDark} />
+        <MaterialIcons name="delete-outline" size={20} color={colors.danger} />
       </TouchableOpacity>
     </TouchableOpacity>
   );

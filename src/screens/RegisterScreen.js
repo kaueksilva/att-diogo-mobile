@@ -45,11 +45,11 @@ const RegisterScreen = ({ navigation }) => {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flex}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.content}>
-            <View style={[styles.logo, styles.logoSuccess]}>
-              <MaterialIcons name="person-add" size={38} color={colors.white} />
+            <View style={styles.logo}>
+              <MaterialIcons name="person-add" size={28} color={colors.white} />
             </View>
-            <Text style={styles.title}>Criar Conta</Text>
-            <Text style={styles.subtitle}>Junte-se a nós para organizar seu dia</Text>
+            <Text style={styles.title}>Criar conta</Text>
+            <Text style={styles.subtitle}>Preencha os dados abaixo para se cadastrar.</Text>
 
             {errors.general ? (
               <View style={styles.errorBanner}>
@@ -100,7 +100,6 @@ const RegisterScreen = ({ navigation }) => {
             <PrimaryButton
               title="Cadastrar"
               icon="how-to-reg"
-              variant="success"
               onPress={handleRegister}
               loading={isSubmitting}
               style={styles.button}

@@ -13,8 +13,8 @@ import PrimaryButton from '../components/PrimaryButton';
 import { colors } from '../theme/theme';
 import { styles } from '../styles/ProfileStyles';
 
-const StatCard = ({ value, label, color }) => (
-  <View style={styles.statCard}>
+const StatCard = ({ value, label, color, isLast }) => (
+  <View style={[styles.statCard, isLast && styles.statCardLast]}>
     <Text style={[styles.statValue, { color }]}>{value}</Text>
     <Text style={styles.statLabel}>{label}</Text>
   </View>
@@ -96,8 +96,8 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="dark" />
-      <ScreenHeader title="Meu Perfil" onBack={() => navigation.goBack()} />
+      <StatusBar style="light" />
+      <ScreenHeader title="Meu perfil" onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <View style={styles.profileTop}>
@@ -105,59 +105,63 @@ const ProfileScreen = ({ navigation }) => {
             <Text style={styles.avatarText}>{user.name.charAt(0).toUpperCase()}</Text>
           </View>
 
-          {isEditingName ? (
-            <View style={styles.nameEditor}>
-              <FormInput
-                style={styles.nameInput}
-                icon="person"
-                value={name}
-                onChangeText={(text) => {
-                  setName(text);
-                  setNameError('');
-                }}
-                error={nameError}
-                autoFocus
-                onSubmitEditing={handleSaveName}
-              />
-              <TouchableOpacity
-                style={[styles.nameEditorBtn, { backgroundColor: colors.success }]}
-                onPress={handleSaveName}
-                accessibilityLabel="Salvar nome"
-              >
-                <MaterialIcons name="check" size={24} color={colors.white} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.nameEditorBtn, { backgroundColor: colors.border }]}
-                onPress={cancelEditName}
-                accessibilityLabel="Cancelar edição"
-              >
-                <MaterialIcons name="close" size={24} color={colors.textBody} />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.nameRow}>
-              <Text style={styles.name}>{user.name}</Text>
-              <TouchableOpacity
-                style={styles.editNameBtn}
-                onPress={() => setIsEditingName(true)}
-                accessibilityLabel="Editar nome"
-              >
-                <MaterialIcons name="edit" size={20} color={colors.primary} />
-              </TouchableOpacity>
-            </View>
-          )}
-          <Text style={styles.email}>{user.email}</Text>
+          <View style={styles.profileInfo}>
+            {isEditingName ? (
+              <View style={styles.nameEditor}>
+                <FormInput
+                  style={styles.nameInput}
+                  value={name}
+                  onChangeText={(text) => {
+                    setName(text);
+                    setNameError('');
+                  }}
+                  error={nameError}
+                  autoFocus
+                  onSubmitEditing={handleSaveName}
+                />
+                <TouchableOpacity
+                  style={[styles.nameEditorBtn, { backgroundColor: colors.primary }]}
+                  onPress={handleSaveName}
+                  accessibilityLabel="Salvar nome"
+                >
+                  <MaterialIcons name="check" size={22} color={colors.white} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.nameEditorBtn, { backgroundColor: colors.background }]}
+                  onPress={cancelEditName}
+                  accessibilityLabel="Cancelar edição"
+                >
+                  <MaterialIcons name="close" size={22} color={colors.textBody} />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <>
+                <View style={styles.nameRow}>
+                  <Text style={styles.name} numberOfLines={1}>{user.name}</Text>
+                  <TouchableOpacity
+                    style={styles.editNameBtn}
+                    onPress={() => setIsEditingName(true)}
+                    accessibilityLabel="Editar nome"
+                  >
+                    <MaterialIcons name="edit" size={18} color={colors.accent} />
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.email} numberOfLines={1}>{user.email}</Text>
+              </>
+            )}
+          </View>
         </View>
 
+        <Text style={styles.sectionLabel}>Resumo das tarefas</Text>
         <View style={styles.statsRow}>
           <StatCard value={stats.total} label="Total" color={colors.primary} />
           <StatCard value={stats.completed} label="Concluídas" color={colors.success} />
-          <StatCard value={stats.pending} label="Pendentes" color={colors.warning} />
+          <StatCard value={stats.pending} label="Pendentes" color={colors.warning} isLast />
         </View>
 
         <View style={styles.apiSection}>
           <View style={styles.apiHeader}>
-            <Text style={styles.apiTitle}>Inspiração do Dia</Text>
+            <Text style={styles.apiTitle}>Inspiração do dia</Text>
             {quote?.offline ? (
               <View style={styles.offlineBadge}>
                 <MaterialIcons name="wifi-off" size={12} color={colors.textSecondary} />
@@ -167,7 +171,7 @@ const ProfileScreen = ({ navigation }) => {
           </View>
 
           {isLoadingQuote || !quote ? (
-            <ActivityIndicator size="small" color={colors.success} style={styles.quoteLoading} />
+            <ActivityIndicator size="small" color={colors.accent} style={styles.quoteLoading} />
           ) : (
             <>
               <Text style={styles.quoteText}>"{quote.text}"</Text>
@@ -176,19 +180,19 @@ const ProfileScreen = ({ navigation }) => {
           )}
 
           <TouchableOpacity onPress={loadQuote} style={styles.refreshBtn} disabled={isLoadingQuote}>
-            <MaterialIcons name="refresh" size={20} color={colors.primary} />
-            <Text style={styles.refreshBtnText}>Nova Frase</Text>
+            <MaterialIcons name="refresh" size={18} color={colors.accent} />
+            <Text style={styles.refreshBtnText}>Nova frase</Text>
           </TouchableOpacity>
         </View>
 
         <PrimaryButton
-          title="Limpar Tarefas Concluídas"
+          title="Limpar tarefas concluídas"
           icon="cleaning-services"
           variant="outline"
           onPress={handleClearCompleted}
           style={styles.actionSpacing}
         />
-        <PrimaryButton title="Sair da Conta" icon="logout" variant="danger" onPress={handleLogout} />
+        <PrimaryButton title="Sair da conta" icon="logout" variant="danger" onPress={handleLogout} />
       </ScrollView>
     </View>
   );

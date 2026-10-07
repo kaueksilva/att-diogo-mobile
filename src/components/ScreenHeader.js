@@ -18,11 +18,11 @@ const ScreenHeader = ({ title, onBack, right }) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
+    <View style={[styles.header, { paddingTop: insets.top + 6 }]}>
       <View style={styles.side}>
         {onBack ? (
           <TouchableOpacity onPress={onBack} style={styles.side} accessibilityLabel="Voltar">
-            <MaterialIcons name="arrow-back" size={24} color={colors.text} />
+            <MaterialIcons name="arrow-back" size={22} color={colors.white} />
           </TouchableOpacity>
         ) : null}
       </View>
