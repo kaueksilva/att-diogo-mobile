@@ -1,31 +1,30 @@
 import { StyleSheet } from 'react-native';
-import { colors, radius, shadow, webInputReset } from '../theme/theme';
+import { colors, radius, webInputReset } from '../theme/theme';
 
 export const formInputStyles = StyleSheet.create({
   wrapper: {
     marginBottom: 18,
   },
   label: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: colors.textBody,
-    marginBottom: 6,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.textSecondary,
+    marginBottom: 8,
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
+    backgroundColor: colors.subtle,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 12,
+    borderColor: 'transparent',
+    paddingHorizontal: 14,
   },
   inputRowMultiline: {
     alignItems: 'flex-start',
   },
   inputRowFocused: {
+    backgroundColor: colors.surface,
     borderColor: colors.accent,
   },
   inputRowError: {
@@ -35,17 +34,17 @@ export const formInputStyles = StyleSheet.create({
     marginRight: 10,
   },
   iconMultiline: {
-    marginTop: 13,
+    marginTop: 15,
   },
   input: {
     flex: 1,
-    paddingVertical: 12,
-    fontSize: 15,
+    paddingVertical: 14,
+    fontSize: 16,
     color: colors.text,
     ...webInputReset,
   },
   multiline: {
-    minHeight: 104,
+    minHeight: 110,
     textAlignVertical: 'top',
   },
   toggle: {
@@ -54,9 +53,8 @@ export const formInputStyles = StyleSheet.create({
   },
   error: {
     color: colors.danger,
-    fontSize: 12,
+    fontSize: 13,
     marginTop: 6,
-    fontWeight: '500',
   },
 });
 
@@ -65,39 +63,33 @@ export const buttonStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 13,
+    paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: radius.md,
-    minHeight: 48,
-    borderWidth: 1,
+    minHeight: 52,
   },
   primary: {
     backgroundColor: colors.primary,
-    borderColor: colors.primary,
   },
   success: {
-    backgroundColor: colors.success,
-    borderColor: colors.success,
+    backgroundColor: colors.accent,
   },
   danger: {
-    backgroundColor: colors.surface,
-    borderColor: colors.dangerBorder,
+    backgroundColor: colors.dangerLight,
   },
   outline: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
+    backgroundColor: colors.subtle,
   },
   disabled: {
-    opacity: 0.6,
+    opacity: 0.5,
   },
   icon: {
     marginRight: 8,
   },
   text: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
     color: colors.white,
-    letterSpacing: 0.3,
   },
 });
 
@@ -106,8 +98,8 @@ export const screenHeaderStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
-    paddingBottom: 10,
-    backgroundColor: colors.primary,
+    paddingBottom: 6,
+    backgroundColor: colors.background,
   },
   side: {
     width: 44,
@@ -120,31 +112,23 @@ export const screenHeaderStyles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 17,
     fontWeight: '600',
-    color: colors.white,
-    letterSpacing: 0.2,
+    color: colors.text,
   },
 });
 
 export const taskCardStyles = StyleSheet.create({
-  card: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
     paddingVertical: 14,
-    paddingRight: 12,
-    paddingLeft: 10,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderLeftWidth: 4,
-    ...shadow(1),
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
   },
-  cardDone: {
-    opacity: 0.6,
+  rowDone: {
+    opacity: 0.45,
   },
   checkbox: {
-    marginRight: 10,
+    marginRight: 12,
     padding: 2,
   },
   content: {
@@ -152,57 +136,54 @@ export const taskCardStyles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
     color: colors.text,
   },
   titleDone: {
     textDecorationLine: 'line-through',
-    color: colors.textMuted,
+    color: colors.textSecondary,
   },
   description: {
     fontSize: 14,
     color: colors.textSecondary,
     lineHeight: 20,
-    marginTop: 3,
+    marginTop: 2,
   },
-  badges: {
+  meta: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
     marginTop: 6,
   },
-  badge: {
+  metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 2,
-    paddingHorizontal: 6,
-    borderRadius: radius.sm,
-    marginRight: 6,
-    marginTop: 4,
+    marginRight: 12,
   },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: '600',
+  metaDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    marginRight: 5,
+  },
+  metaText: {
+    fontSize: 12,
+    color: colors.textSecondary,
     marginLeft: 3,
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
+  },
+  metaTextAfterDot: {
+    marginLeft: 0,
   },
   thumbnail: {
-    width: 48,
-    height: 48,
+    width: 44,
+    height: 44,
     borderRadius: radius.sm,
     marginLeft: 12,
-    backgroundColor: colors.background,
+    backgroundColor: colors.subtle,
   },
   deleteBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.sm,
-    borderWidth: 1,
-    borderColor: colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 10,
+    padding: 8,
+    marginLeft: 4,
   },
 });
 
@@ -211,30 +192,22 @@ export const emptyStateStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
+    padding: 40,
   },
-  iconBox: {
-    width: 80,
-    height: 80,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.primaryBorder,
-    backgroundColor: colors.primaryLight,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 18,
+  icon: {
+    marginBottom: 14,
   },
   title: {
     fontSize: 17,
     fontWeight: '600',
-    color: colors.textBody,
+    color: colors.text,
     marginBottom: 6,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 14,
-    color: colors.textMuted,
+    fontSize: 15,
+    color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 21,
+    lineHeight: 22,
   },
 });

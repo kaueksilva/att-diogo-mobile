@@ -4,16 +4,16 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { colors, PRIORITIES } from '../theme/theme';
 import { taskCardStyles as styles } from '../styles/ComponentStyles';
 
-const Badge = ({ icon, label, color, background }) => (
-  <View style={[styles.badge, { backgroundColor: background }]}>
-    <MaterialIcons name={icon} size={13} color={color} />
-    <Text style={[styles.badgeText, { color }]}>{label}</Text>
+const MetaItem = ({ icon, label }) => (
+  <View style={styles.metaItem}>
+    <MaterialIcons name={icon} size={13} color={colors.textMuted} />
+    <Text style={styles.metaText}>{label}</Text>
   </View>
 );
 
 /**
- * Card de uma tarefa na lista.
- * Toque no círculo marca como concluída; toque no card abre a edição.
+ * Linha de uma tarefa na lista.
+ * Toque no círculo marca como concluída; toque na linha abre a edição.
  * Envolvido em `memo` para não re-renderizar itens que não mudaram.
  *
  * @param {object} props
@@ -27,9 +27,9 @@ const TaskCard = ({ task, onPress, onToggle, onDelete }) => {
 
   return (
     <TouchableOpacity
-      style={[styles.card, { borderLeftColor: priority.color }, task.completed && styles.cardDone]}
+      style={[styles.row, task.completed && styles.rowDone]}
       onPress={() => onPress(task)}
-      activeOpacity={0.85}
+      activeOpacity={0.6}
       accessibilityLabel={`Tarefa ${task.title}`}
     >
       <TouchableOpacity
@@ -40,9 +40,9 @@ const TaskCard = ({ task, onPress, onToggle, onDelete }) => {
         accessibilityLabel={task.completed ? 'Marcar como pendente' : 'Marcar como concluída'}
       >
         <MaterialIcons
-          name={task.completed ? 'check-box' : 'check-box-outline-blank'}
-          size={26}
-          color={task.completed ? colors.success : colors.textMuted}
+          name={task.completed ? 'check-circle' : 'radio-button-unchecked'}
+          size={24}
+          color={task.completed ? colors.accent : colors.textMuted}
         />
       </TouchableOpacity>
 
@@ -54,14 +54,13 @@ const TaskCard = ({ task, onPress, onToggle, onDelete }) => {
           <Text style={styles.description} numberOfLines={2}>{task.description}</Text>
         ) : null}
 
-        <View style={styles.badges}>
-          <Badge icon="flag" label={priority.label} color={priority.color} background={priority.background} />
-          {task.location ? (
-            <Badge icon="place" label="Local" color={colors.primary} background={colors.primaryLight} />
-          ) : null}
-          {task.photo ? (
-            <Badge icon="photo-camera" label="Foto" color={colors.accent} background={colors.primaryLight} />
-          ) : null}
+        <View style={styles.meta}>
+          <View style={styles.metaItem}>
+            <View style={[styles.metaDot, { backgroundColor: priority.color }]} />
+            <Text style={[styles.metaText, styles.metaTextAfterDot]}>{priority.label}</Text>
+          </View>
+          {task.location ? <MetaItem icon="place" label="Local" /> : null}
+          {task.photo ? <MetaItem icon="photo-camera" label="Foto" /> : null}
         </View>
       </View>
 
@@ -72,7 +71,7 @@ const TaskCard = ({ task, onPress, onToggle, onDelete }) => {
         onPress={() => onDelete(task)}
         accessibilityLabel="Excluir tarefa"
       >
-        <MaterialIcons name="delete-outline" size={20} color={colors.danger} />
+        <MaterialIcons name="delete-outline" size={20} color={colors.textMuted} />
       </TouchableOpacity>
     </TouchableOpacity>
   );

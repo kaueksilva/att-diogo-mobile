@@ -104,7 +104,8 @@ const HomeScreen = ({ navigation }) => {
   }, [tasks, filter, search]);
 
   const firstName = user?.name?.split(' ')[0] ?? '';
-  const today = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const dateText = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const today = dateText.charAt(0).toUpperCase() + dateText.slice(1);
 
   const renderEmpty = () => {
     if (tasks.length === 0) {
@@ -112,7 +113,7 @@ const HomeScreen = ({ navigation }) => {
         <EmptyState
           icon="playlist-add"
           title="Nenhuma tarefa ainda"
-          subtitle="Toque em “Nova tarefa” para cadastrar a primeira."
+          subtitle="Toque no + para criar a primeira."
         />
       );
     }
@@ -127,15 +128,12 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
 
-      <View style={[styles.header, { paddingTop: insets.top + 14 }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <View style={styles.headerInner}>
           <View style={styles.headerTop}>
-            <View style={styles.greetingContainer}>
-              <Text style={styles.date}>{today}</Text>
-              <Text style={styles.greeting} numberOfLines={1}>{getGreeting()}, {firstName}</Text>
-            </View>
+            <Text style={styles.date} numberOfLines={1}>{today}</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Profile')} accessibilityLabel="Abrir perfil">
               <View style={styles.profileBtn}>
                 <Text style={styles.profileBtnText}>{firstName.charAt(0).toUpperCase()}</Text>
@@ -143,23 +141,23 @@ const HomeScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.progressCard}>
-            <View style={styles.progressRow}>
-              <Text style={styles.progressLabel}>
-                {stats.completed} de {stats.total} tarefas concluídas
-              </Text>
-              <Text style={styles.progressPercent}>{stats.progress}%</Text>
-            </View>
-            <View style={styles.progressTrack}>
-              <View style={[styles.progressFill, { width: `${stats.progress}%` }]} />
-            </View>
+          <Text style={styles.greeting} numberOfLines={1}>{getGreeting()}, {firstName}</Text>
+
+          <View style={styles.progressRow}>
+            <Text style={styles.progressLabel}>
+              {stats.completed} de {stats.total} concluídas
+            </Text>
+            <Text style={styles.progressPercent}>{stats.progress}%</Text>
+          </View>
+          <View style={styles.progressTrack}>
+            <View style={[styles.progressFill, { width: `${stats.progress}%` }]} />
           </View>
         </View>
       </View>
 
       <View style={styles.toolbar}>
         <View style={styles.searchBox}>
-          <MaterialIcons name="search" size={22} color={colors.textMuted} />
+          <MaterialIcons name="search" size={20} color={colors.textMuted} />
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar tarefas..."
@@ -222,8 +220,7 @@ const HomeScreen = ({ navigation }) => {
         activeOpacity={0.8}
         accessibilityLabel="Nova tarefa"
       >
-        <MaterialIcons name="add" size={22} color={colors.white} />
-        <Text style={styles.fabText}>Nova tarefa</Text>
+        <MaterialIcons name="add" size={28} color={colors.white} />
       </TouchableOpacity>
     </View>
   );

@@ -46,7 +46,7 @@ const RegisterScreen = ({ navigation }) => {
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.content}>
             <View style={styles.logo}>
-              <MaterialIcons name="person-add" size={28} color={colors.white} />
+              <MaterialIcons name="person-add" size={24} color={colors.white} />
             </View>
             <Text style={styles.title}>Criar conta</Text>
             <Text style={styles.subtitle}>Preencha os dados abaixo para se cadastrar.</Text>

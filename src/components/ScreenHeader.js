@@ -22,7 +22,7 @@ const ScreenHeader = ({ title, onBack, right }) => {
       <View style={styles.side}>
         {onBack ? (
           <TouchableOpacity onPress={onBack} style={styles.side} accessibilityLabel="Voltar">
-            <MaterialIcons name="arrow-back" size={22} color={colors.white} />
+            <MaterialIcons name="arrow-back-ios" size={20} color={colors.text} style={{ marginLeft: 6 }} />
           </TouchableOpacity>
         ) : null}
       </View>

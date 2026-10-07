@@ -217,7 +217,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <ScreenHeader
         title={isEditing ? 'Editar tarefa' : 'Nova tarefa'}
         onBack={() => navigation.goBack()}
@@ -255,16 +255,13 @@ const TaskDetailScreen = ({ route, navigation }) => {
               return (
                 <TouchableOpacity
                   key={key}
-                  style={[
-                    styles.priorityChip,
-                    isSelected && { borderColor: config.color, backgroundColor: config.background },
-                  ]}
+                  style={[styles.priorityChip, isSelected && styles.priorityChipActive]}
                   onPress={() => setPriority(key)}
                   accessibilityRole="radio"
                   accessibilityState={{ selected: isSelected }}
                 >
                   <View style={[styles.priorityDot, { backgroundColor: config.color }]} />
-                  <Text style={[styles.priorityText, isSelected && { color: config.color }]}>{config.label}</Text>
+                  <Text style={[styles.priorityText, isSelected && styles.priorityTextActive]}>{config.label}</Text>
                 </TouchableOpacity>
               );
             })}
@@ -353,8 +350,8 @@ const TaskDetailScreen = ({ route, navigation }) => {
             <View style={styles.card}>
               <View style={styles.statusRow}>
                 <MaterialIcons
-                  name={completed ? 'check-box' : 'check-box-outline-blank'}
-                  size={26}
+                  name={completed ? 'check-circle' : 'radio-button-unchecked'}
+                  size={24}
                   color={completed ? colors.success : colors.textMuted}
                 />
                 <View style={styles.statusInfo}>

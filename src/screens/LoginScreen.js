@@ -49,10 +49,10 @@ const LoginScreen = ({ navigation }) => {
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.content}>
             <View style={styles.logo}>
-              <MaterialIcons name="task-alt" size={28} color={colors.white} />
+              <MaterialIcons name="check" size={26} color={colors.white} />
             </View>
-            <Text style={styles.title}>Acesso ao sistema</Text>
-            <Text style={styles.subtitle}>Entre com seu e-mail e senha para gerenciar suas tarefas.</Text>
+            <Text style={styles.title}>Bem-vindo</Text>
+            <Text style={styles.subtitle}>Entre para organizar suas tarefas.</Text>
 
             {errors.general ? (
               <View style={styles.errorBanner}>
@@ -97,14 +97,14 @@ const LoginScreen = ({ navigation }) => {
             />
 
             <TouchableOpacity style={styles.demoCard} onPress={fillDemoAccount} activeOpacity={0.8}>
-              <MaterialIcons name="school" size={22} color={colors.primary} />
+              <MaterialIcons name="school" size={22} color={colors.textSecondary} />
               <View style={styles.demoTextContainer}>
                 <Text style={styles.demoTitle}>Usar conta de teste</Text>
                 <Text style={styles.demoSubtitle}>
                   {DEMO_ACCOUNT.email} • {DEMO_ACCOUNT.password}
                 </Text>
               </View>
-              <MaterialIcons name="chevron-right" size={24} color={colors.primary} />
+              <MaterialIcons name="chevron-right" size={22} color={colors.textMuted} />
             </TouchableOpacity>
 
             <View style={styles.footer}>

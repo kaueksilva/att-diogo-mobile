@@ -10,9 +10,7 @@ import { emptyStateStyles as styles } from '../styles/ComponentStyles';
  */
 const EmptyState = ({ icon, title, subtitle }) => (
   <View style={styles.container}>
-    <View style={styles.iconBox}>
-      <MaterialIcons name={icon} size={36} color={colors.primary} />
-    </View>
+    <MaterialIcons name={icon} size={44} color={colors.textMuted} style={styles.icon} />
     <Text style={styles.title}>{title}</Text>
     {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
   </View>

@@ -96,7 +96,7 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <ScreenHeader title="Meu perfil" onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
@@ -127,7 +127,7 @@ const ProfileScreen = ({ navigation }) => {
                   <MaterialIcons name="check" size={22} color={colors.white} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.nameEditorBtn, { backgroundColor: colors.background }]}
+                  style={[styles.nameEditorBtn, { backgroundColor: colors.subtle }]}
                   onPress={cancelEditName}
                   accessibilityLabel="Cancelar edição"
                 >
@@ -154,9 +154,9 @@ const ProfileScreen = ({ navigation }) => {
 
         <Text style={styles.sectionLabel}>Resumo das tarefas</Text>
         <View style={styles.statsRow}>
-          <StatCard value={stats.total} label="Total" color={colors.primary} />
-          <StatCard value={stats.completed} label="Concluídas" color={colors.success} />
-          <StatCard value={stats.pending} label="Pendentes" color={colors.warning} isLast />
+          <StatCard value={stats.total} label="Total" color={colors.text} />
+          <StatCard value={stats.completed} label="Concluídas" color={colors.accent} />
+          <StatCard value={stats.pending} label="Pendentes" color={colors.text} isLast />
         </View>
 
         <View style={styles.apiSection}>
