@@ -26,14 +26,14 @@ npx expo start
 
 | Requisito | Como foi atendido |
 |---|---|
-| **Plataformas iOS/Android** | Expo SDK 51, roda em ambos (e também na Web). |
+| **Plataformas iOS/Android** | Expo SDK 57, roda em ambos (e também na Web). |
 | **5+ telas com navegação** | Login, Cadastro, Lista de Tarefas, Criar/Editar Tarefa e Perfil (React Navigation Stack). |
-| **Persistência de dados** | AsyncStorage (contas, sessão e tarefas por usuário) + FileSystem (fotos). |
+| **Persistência de dados** | AsyncStorage (contas, sessão, tarefas por usuário e fotos anexadas). |
 | **Design responsivo** | Conteúdo limitado a 600px e centralizado em tablets/web, áreas seguras (notch) respeitadas, layouts flexíveis. |
 | **Autenticação** | Cadastro e login com validação, sessão persistente, logout e edição de nome. |
 | **CRUD completo** | Tarefas: criar, listar/buscar/filtrar, editar, concluir e excluir. |
 | **API externa** | [DummyJSON Quotes](https://dummyjson.com/docs/quotes) (frase do dia) e [Open-Meteo](https://open-meteo.com) (clima no local da tarefa). |
-| **Recursos do dispositivo** | 📷 Câmera/galeria (`expo-image-picker`), 📍 GPS + endereço (`expo-location`), 💾 armazenamento de arquivos (`expo-file-system`). |
+| **Recursos do dispositivo** | 📷 Câmera/galeria (`expo-image-picker`), 📍 GPS + endereço (`expo-location`). |
 | **Desempenho** | Operações locais instantâneas, atualização otimista ao concluir tarefas, `memo`/`useMemo` na lista, timeout de 8s nas APIs. |
 | **Segurança** | Senhas salvas apenas como **hash SHA-256 com salt** único por usuário (`expo-crypto`); a sessão nunca guarda senha; contas antigas são migradas automaticamente. |
 | **Funcionamento offline** | Todo o CRUD é local. Sem internet, a frase do dia usa uma lista local e o clima mostra aviso amigável. |
@@ -49,7 +49,7 @@ npx expo start
 - **Busca** por título/descrição e **filtros** (Todas / Pendentes / Concluídas) com contadores.
 - **Prioridade** (Alta, Média, Baixa) com cores; lista ordenada por status → prioridade → data.
 - **Concluir tarefa** com um toque no círculo do card.
-- **Foto** pela câmera ou galeria, salva permanentemente no armazenamento do app.
+- **Foto** pela câmera ou galeria, anexada à tarefa.
 - **Localização** por GPS com endereço aproximado, link "Abrir no mapa" e **clima atual** no local.
 - **Perfil** com estatísticas, edição do nome, frase motivacional e "Limpar concluídas".
 - Diálogos de confirmação que funcionam também no preview Web do Snack.
@@ -65,7 +65,7 @@ src/
 │   └── AuthContext.js     # Sessão, login, cadastro, perfil, logout
 ├── services/
 │   ├── taskService.js     # Repositório de tarefas (CRUD, ordenação, estatísticas)
-│   ├── fileService.js     # Armazenamento permanente de fotos
+│   ├── fileService.js     # Tratamento das fotos anexadas
 │   └── apiService.js      # APIs externas com timeout e fallback offline
 ├── screens/               # Login, Register, Home, TaskDetail, Profile
 ├── components/            # FormInput, PrimaryButton, ScreenHeader, TaskCard, EmptyState
@@ -86,4 +86,4 @@ src/
 
 ## 🧰 Tecnologias
 
-React Native 0.74 · Expo SDK 51 · React Navigation 6 · AsyncStorage · expo-location · expo-image-picker · expo-file-system · expo-crypto · @expo/vector-icons
+React Native 0.86 · Expo SDK 57 · React Navigation 7 · AsyncStorage · expo-location · expo-image-picker · expo-crypto · @expo/vector-icons
