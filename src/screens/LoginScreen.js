@@ -1,83 +1,123 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useContext, useRef } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { MaterialIcons } from '@expo/vector-icons';
-import { AuthContext } from '../context/AuthContext';
-import { styles } from '../styles/LoginStyles';
+import { AuthContext, DEMO_ACCOUNT } from '../context/AuthContext';
+import FormInput from '../components/FormInput';
+import PrimaryButton from '../components/PrimaryButton';
+import { validateLogin, isFormValid } from '../utils/validation';
+import { colors } from '../theme/theme';
+import { styles } from '../styles/AuthStyles';
 
+/** Tela de login: valida os campos e autentica pelo AuthContext. */
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
   const { login } = useContext(AuthContext);
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const passwordRef = useRef(null);
 
-  const validate = () => {
-    let isValid = true;
-    setEmailError('');
-    setPasswordError('');
-
-    if (!email) {
-      setEmailError('E-mail é obrigatório');
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError('E-mail inválido');
-      isValid = false;
-    }
-
-    if (!password) {
-      setPasswordError('Senha é obrigatória');
-      isValid = false;
-    }
-
-    return isValid;
+  /** Atualiza um campo e limpa o erro dele enquanto o usuário digita. */
+  const updateField = (field) => (value) => {
+    setForm((current) => ({ ...current, [field]: value }));
+    setErrors((current) => ({ ...current, [field]: undefined, general: undefined }));
   };
 
   const handleLogin = async () => {
-    if (!validate()) return;
+    const validation = validateLogin(form);
+    setErrors(validation);
+    if (!isFormValid(validation)) return;
 
-    const success = await login(email, password);
-    if (!success) {
-      Alert.alert('Erro', 'Credenciais inválidas.');
+    setIsSubmitting(true);
+    const result = await login(form.email, form.password);
+    if (!result.success) {
+      setErrors({ general: result.message });
+      setIsSubmitting(false);
     }
+  };
+
+  const fillDemoAccount = () => {
+    setForm({ email: DEMO_ACCOUNT.email, password: DEMO_ACCOUNT.password });
+    setErrors({});
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Bem-vindo</Text>
-        <Text style={styles.subtitle}>Gerencie suas tarefas com facilidade</Text>
+      <StatusBar style="dark" />
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flex}>
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <View style={styles.content}>
+            <View style={styles.logo}>
+              <MaterialIcons name="task-alt" size={40} color={colors.white} />
+            </View>
+            <Text style={styles.title}>Bem-vindo</Text>
+            <Text style={styles.subtitle}>Gerencie suas tarefas com facilidade</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail (ex: teste@teste.com)"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+            {errors.general ? (
+              <View style={styles.errorBanner}>
+                <MaterialIcons name="error-outline" size={20} color={colors.dangerDark} />
+                <Text style={styles.errorBannerText}>{errors.general}</Text>
+              </View>
+            ) : null}
 
-        <TextInput
-          style={styles.input}
-          placeholder="Senha (ex: 123456)"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+            <FormInput
+              label="E-mail"
+              icon="email"
+              placeholder="seu@email.com"
+              value={form.email}
+              onChangeText={updateField('email')}
+              error={errors.email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoComplete="email"
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
+            />
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
+            <FormInput
+              ref={passwordRef}
+              label="Senha"
+              icon="lock"
+              placeholder="Sua senha"
+              value={form.password}
+              onChangeText={updateField('password')}
+              error={errors.password}
+              secureTextEntry
+              returnKeyType="done"
+              onSubmitEditing={handleLogin}
+            />
 
-        <View style={styles.registerContainer}>
-          <Text style={styles.registerText}>Não tem uma conta? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-            <Text style={styles.registerLink}>Cadastre-se</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+            <PrimaryButton
+              title="Entrar"
+              icon="login"
+              onPress={handleLogin}
+              loading={isSubmitting}
+              style={styles.button}
+            />
+
+            <TouchableOpacity style={styles.demoCard} onPress={fillDemoAccount} activeOpacity={0.8}>
+              <MaterialIcons name="school" size={26} color={colors.primary} />
+              <View style={styles.demoTextContainer}>
+                <Text style={styles.demoTitle}>Usar conta de teste</Text>
+                <Text style={styles.demoSubtitle}>
+                  {DEMO_ACCOUNT.email} • {DEMO_ACCOUNT.password}
+                </Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={24} color={colors.primary} />
+            </TouchableOpacity>
+
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>Não tem uma conta? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text style={styles.footerLink}>Cadastre-se</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
-
 
 export default LoginScreen;

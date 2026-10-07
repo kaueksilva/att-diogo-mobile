@@ -1,110 +1,122 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AuthContext } from '../context/AuthContext';
-import { styles } from '../styles/RegisterStyles';
+import FormInput from '../components/FormInput';
+import PrimaryButton from '../components/PrimaryButton';
+import { validateRegister, isFormValid } from '../utils/validation';
+import { colors } from '../theme/theme';
+import { styles } from '../styles/AuthStyles';
 
+/**
+ * Tela de cadastro. Após criar a conta o usuário já entra no app
+ * automaticamente (o navegador troca para as telas autenticadas).
+ */
 const RegisterScreen = ({ navigation }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  
-  const [errors, setErrors] = useState({});
   const { register } = useContext(AuthContext);
+  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validate = () => {
-    let newErrors = {};
-
-    if (!name || name.trim().length < 3) {
-      newErrors.name = 'Nome deve ter pelo menos 3 letras';
-    }
-    if (!email) {
-      newErrors.email = 'E-mail é obrigatório';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'E-mail inválido';
-    }
-    if (!password || password.length < 6) {
-      newErrors.password = 'A senha deve ter pelo menos 6 caracteres';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  /** Atualiza um campo e limpa o erro dele enquanto o usuário digita. */
+  const updateField = (field) => (value) => {
+    setForm((current) => ({ ...current, [field]: value }));
+    setErrors((current) => ({ ...current, [field]: undefined, general: undefined }));
   };
 
   const handleRegister = async () => {
-    if (!validate()) return;
+    const validation = validateRegister(form);
+    setErrors(validation);
+    if (!isFormValid(validation)) return;
 
-    const success = await register(name, email, password);
-    if (success) {
-      Alert.alert('Sucesso', 'Conta criada com sucesso!', [
-        { text: 'OK', onPress: () => navigation.navigate('Login') }
-      ]);
-    } else {
-      Alert.alert('Erro', 'Ocorreu um erro ao criar a conta.');
+    setIsSubmitting(true);
+    const result = await register(form.name, form.email, form.password);
+    if (!result.success) {
+      setErrors({ general: result.message });
+      setIsSubmitting(false);
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.formContainer}
-      >
-        <View style={styles.headerContainer}>
-          <Text style={styles.title}>Criar Conta</Text>
-          <Text style={styles.subtitle}>Junte-se a nós para organizar seu dia</Text>
-        </View>
+      <StatusBar style="dark" />
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flex}>
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <View style={styles.content}>
+            <View style={[styles.logo, styles.logoSuccess]}>
+              <MaterialIcons name="person-add" size={38} color={colors.white} />
+            </View>
+            <Text style={styles.title}>Criar Conta</Text>
+            <Text style={styles.subtitle}>Junte-se a nós para organizar seu dia</Text>
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={[styles.input, errors.name && styles.inputError]}
-            placeholder="Nome Completo"
-            value={name}
-            onChangeText={setName}
-            placeholderTextColor="#9CA3AF"
-          />
-          {errors.name ? <Text style={styles.errorText}>{errors.name}</Text> : null}
-        </View>
+            {errors.general ? (
+              <View style={styles.errorBanner}>
+                <MaterialIcons name="error-outline" size={20} color={colors.dangerDark} />
+                <Text style={styles.errorBannerText}>{errors.general}</Text>
+              </View>
+            ) : null}
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={[styles.input, errors.email && styles.inputError]}
-            placeholder="Seu E-mail"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            placeholderTextColor="#9CA3AF"
-          />
-          {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
-        </View>
+            <FormInput
+              label="Nome completo"
+              icon="person"
+              placeholder="Como devemos te chamar?"
+              value={form.name}
+              onChangeText={updateField('name')}
+              error={errors.name}
+              autoCapitalize="words"
+            />
+            <FormInput
+              label="E-mail"
+              icon="email"
+              placeholder="seu@email.com"
+              value={form.email}
+              onChangeText={updateField('email')}
+              error={errors.email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            <FormInput
+              label="Senha"
+              icon="lock"
+              placeholder="Mínimo de 6 caracteres"
+              value={form.password}
+              onChangeText={updateField('password')}
+              error={errors.password}
+              secureTextEntry
+            />
+            <FormInput
+              label="Confirmar senha"
+              icon="lock-outline"
+              placeholder="Digite a senha novamente"
+              value={form.confirmPassword}
+              onChangeText={updateField('confirmPassword')}
+              error={errors.confirmPassword}
+              secureTextEntry
+              onSubmitEditing={handleRegister}
+            />
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={[styles.input, errors.password && styles.inputError]}
-            placeholder="Senha (mín. 6 caracteres)"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            placeholderTextColor="#9CA3AF"
-          />
-          {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
-        </View>
+            <PrimaryButton
+              title="Cadastrar"
+              icon="how-to-reg"
+              variant="success"
+              onPress={handleRegister}
+              loading={isSubmitting}
+              style={styles.button}
+            />
 
-        <TouchableOpacity style={styles.button} onPress={handleRegister} activeOpacity={0.8}>
-          <Text style={styles.buttonText}>Cadastrar</Text>
-        </TouchableOpacity>
-
-        <View style={styles.loginContainer}>
-          <Text style={styles.loginText}>Já tem uma conta? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-            <Text style={styles.loginLink}>Entrar</Text>
-          </TouchableOpacity>
-        </View>
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>Já tem uma conta? </Text>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Text style={styles.footerLink}>Entrar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
-
 
 export default RegisterScreen;
