@@ -3,13 +3,14 @@ import { View, Text, TextInput, FlatList, TouchableOpacity, RefreshControl, Acti
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
+import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AuthContext } from '../context/AuthContext';
 import { getTasks, toggleTask, deleteTask, sortTasks, getStats } from '../services/taskService';
 import { showAlert, confirmAction } from '../utils/alert';
 import TaskCard from '../components/TaskCard';
 import EmptyState from '../components/EmptyState';
-import { colors } from '../theme/theme';
+import { colors, gradients } from '../theme/theme';
 import { styles } from '../styles/HomeStyles';
 
 const FILTERS = [
@@ -113,7 +114,7 @@ const HomeScreen = ({ navigation }) => {
         <EmptyState
           icon="playlist-add"
           title="Nenhuma tarefa ainda"
-          subtitle="Toque no + para criar a primeira."
+          subtitle="Toque no botão + para criar a primeira. 🚀"
         />
       );
     }
@@ -128,12 +129,20 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
 
-      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
+      <LinearGradient
+        colors={gradients.primary}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.header, { paddingTop: insets.top + 14 }]}
+      >
         <View style={styles.headerInner}>
           <View style={styles.headerTop}>
-            <Text style={styles.date} numberOfLines={1}>{today}</Text>
+            <View style={styles.greetingContainer}>
+              <Text style={styles.date} numberOfLines={1}>{today}</Text>
+              <Text style={styles.greeting} numberOfLines={1}>{getGreeting()}, {firstName} 👋</Text>
+            </View>
             <TouchableOpacity onPress={() => navigation.navigate('Profile')} accessibilityLabel="Abrir perfil">
               <View style={styles.profileBtn}>
                 <Text style={styles.profileBtnText}>{firstName.charAt(0).toUpperCase()}</Text>
@@ -141,23 +150,29 @@ const HomeScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.greeting} numberOfLines={1}>{getGreeting()}, {firstName}</Text>
-
-          <View style={styles.progressRow}>
-            <Text style={styles.progressLabel}>
-              {stats.completed} de {stats.total} concluídas
-            </Text>
-            <Text style={styles.progressPercent}>{stats.progress}%</Text>
+          <View style={styles.statsRow}>
+            <View style={styles.statTile}>
+              <Text style={styles.statValue}>{stats.pending}</Text>
+              <Text style={styles.statLabel}>Pendentes</Text>
+            </View>
+            <View style={styles.statTile}>
+              <Text style={styles.statValue}>{stats.completed}</Text>
+              <Text style={styles.statLabel}>Feitas</Text>
+            </View>
+            <View style={styles.statTile}>
+              <Text style={styles.statValue}>{stats.progress}%</Text>
+              <Text style={styles.statLabel}>Progresso</Text>
+            </View>
           </View>
           <View style={styles.progressTrack}>
             <View style={[styles.progressFill, { width: `${stats.progress}%` }]} />
           </View>
         </View>
-      </View>
+      </LinearGradient>
 
       <View style={styles.toolbar}>
         <View style={styles.searchBox}>
-          <MaterialIcons name="search" size={20} color={colors.textMuted} />
+          <MaterialIcons name="search" size={22} color={colors.primary} />
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar tarefas..."
@@ -215,12 +230,14 @@ const HomeScreen = ({ navigation }) => {
       )}
 
       <TouchableOpacity
-        style={[styles.fab, { bottom: insets.bottom + 20 }]}
+        style={[styles.fab, { bottom: insets.bottom + 24 }]}
         onPress={() => navigation.navigate('TaskDetail')}
-        activeOpacity={0.8}
+        activeOpacity={0.85}
         accessibilityLabel="Nova tarefa"
       >
-        <MaterialIcons name="add" size={28} color={colors.white} />
+        <LinearGradient colors={gradients.primary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.fabInner}>
+          <MaterialIcons name="add" size={32} color={colors.white} />
+        </LinearGradient>
       </TouchableOpacity>
     </View>
   );

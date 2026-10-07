@@ -1,31 +1,32 @@
 import { StyleSheet } from 'react-native';
-import { colors, radius, webInputReset } from '../theme/theme';
+import { colors, radius, shadow, webInputReset } from '../theme/theme';
 
 export const formInputStyles = StyleSheet.create({
   wrapper: {
-    marginBottom: 18,
+    marginBottom: 16,
   },
   label: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.textBody,
     marginBottom: 8,
+    marginLeft: 4,
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.subtle,
+    backgroundColor: colors.surface,
     borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: 'transparent',
+    borderWidth: 2,
+    borderColor: colors.border,
     paddingHorizontal: 14,
   },
   inputRowMultiline: {
     alignItems: 'flex-start',
   },
   inputRowFocused: {
+    borderColor: colors.primary,
     backgroundColor: colors.surface,
-    borderColor: colors.accent,
   },
   inputRowError: {
     borderColor: colors.danger,
@@ -34,11 +35,11 @@ export const formInputStyles = StyleSheet.create({
     marginRight: 10,
   },
   iconMultiline: {
-    marginTop: 15,
+    marginTop: 14,
   },
   input: {
     flex: 1,
-    paddingVertical: 14,
+    paddingVertical: 13,
     fontSize: 16,
     color: colors.text,
     ...webInputReset,
@@ -54,11 +55,20 @@ export const formInputStyles = StyleSheet.create({
   error: {
     color: colors.danger,
     fontSize: 13,
+    fontWeight: '600',
     marginTop: 6,
+    marginLeft: 4,
   },
 });
 
 export const buttonStyles = StyleSheet.create({
+  wrapper: {
+    borderRadius: radius.md,
+  },
+  wrapperPrimary: {
+    backgroundColor: colors.primary,
+    ...shadow(6, colors.accent, 0.35),
+  },
   base: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -66,30 +76,29 @@ export const buttonStyles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: radius.md,
-    minHeight: 52,
+    minHeight: 54,
   },
-  primary: {
-    backgroundColor: colors.primary,
-  },
+  primary: {},
   success: {
-    backgroundColor: colors.accent,
+    backgroundColor: colors.success,
   },
   danger: {
     backgroundColor: colors.dangerLight,
   },
   outline: {
-    backgroundColor: colors.subtle,
+    backgroundColor: colors.primaryLight,
   },
   disabled: {
-    opacity: 0.5,
+    opacity: 0.6,
   },
   icon: {
     marginRight: 8,
   },
   text: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '800',
     color: colors.white,
+    letterSpacing: 0.2,
   },
 });
 
@@ -97,9 +106,10 @@ export const screenHeaderStyles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingBottom: 6,
-    backgroundColor: colors.background,
+    paddingHorizontal: 12,
+    paddingBottom: 16,
+    borderBottomLeftRadius: radius.xl,
+    borderBottomRightRadius: radius.xl,
   },
   side: {
     width: 44,
@@ -107,41 +117,56 @@ export const screenHeaderStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.22)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   title: {
     flex: 1,
     textAlign: 'center',
-    fontSize: 17,
-    fontWeight: '600',
-    color: colors.text,
+    fontSize: 19,
+    fontWeight: '800',
+    color: colors.white,
   },
 });
 
 export const taskCardStyles = StyleSheet.create({
-  row: {
+  card: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: 14,
+    marginBottom: 12,
+    ...shadow(3),
   },
-  rowDone: {
-    opacity: 0.45,
+  cardDone: {
+    opacity: 0.55,
   },
   checkbox: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 2.5,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 12,
-    padding: 2,
   },
   content: {
     flex: 1,
   },
   title: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '700',
     color: colors.text,
   },
   titleDone: {
     textDecorationLine: 'line-through',
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
   description: {
     fontSize: 14,
@@ -149,41 +174,41 @@ export const taskCardStyles = StyleSheet.create({
     lineHeight: 20,
     marginTop: 2,
   },
-  meta: {
+  badges: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
     marginTop: 6,
   },
-  metaItem: {
+  badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 12,
+    paddingVertical: 3,
+    paddingHorizontal: 9,
+    borderRadius: radius.pill,
+    marginRight: 6,
+    marginTop: 4,
   },
-  metaDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    marginRight: 5,
-  },
-  metaText: {
+  badgeText: {
     fontSize: 12,
-    color: colors.textSecondary,
-    marginLeft: 3,
-  },
-  metaTextAfterDot: {
-    marginLeft: 0,
+    fontWeight: '700',
+    marginLeft: 4,
   },
   thumbnail: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.sm,
+    width: 50,
+    height: 50,
+    borderRadius: radius.md,
     marginLeft: 12,
     backgroundColor: colors.subtle,
   },
   deleteBtn: {
-    padding: 8,
-    marginLeft: 4,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.dangerLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
   },
 });
 
@@ -192,14 +217,19 @@ export const emptyStateStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 40,
+    padding: 32,
   },
-  icon: {
-    marginBottom: 14,
+  iconCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 18,
   },
   title: {
-    fontSize: 17,
-    fontWeight: '600',
+    fontSize: 19,
+    fontWeight: '800',
     color: colors.text,
     marginBottom: 6,
     textAlign: 'center',

@@ -86,4 +86,4 @@ src/
 
 ## 🧰 Tecnologias
 
-React Native 0.86 · Expo SDK 57 · React Navigation 7 · AsyncStorage · expo-location · expo-image-picker · expo-crypto · @expo/vector-icons
+React Native 0.86 · Expo SDK 57 · React Navigation 7 · AsyncStorage · expo-location · expo-image-picker · expo-crypto · expo-linear-gradient · @expo/vector-icons

@@ -203,7 +203,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
     if (weatherStatus === 'ready' && weather) {
       return (
         <View style={styles.weatherBox}>
-          <MaterialIcons name={weather.icon} size={28} color={colors.accent} />
+          <MaterialIcons name={weather.icon} size={34} color={colors.warning} />
           <Text style={styles.weatherTemp}>{weather.temperature}°C</Text>
           <View style={styles.weatherInfo}>
             <Text style={styles.weatherDesc}>{weather.description}</Text>
@@ -217,7 +217,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <ScreenHeader
         title={isEditing ? 'Editar tarefa' : 'Nova tarefa'}
         onBack={() => navigation.goBack()}
@@ -255,12 +255,12 @@ const TaskDetailScreen = ({ route, navigation }) => {
               return (
                 <TouchableOpacity
                   key={key}
-                  style={[styles.priorityChip, isSelected && styles.priorityChipActive]}
+                  style={[styles.priorityChip, isSelected && { backgroundColor: config.color }]}
                   onPress={() => setPriority(key)}
                   accessibilityRole="radio"
                   accessibilityState={{ selected: isSelected }}
                 >
-                  <View style={[styles.priorityDot, { backgroundColor: config.color }]} />
+                  <View style={[styles.priorityDot, { backgroundColor: isSelected ? colors.white : config.color }]} />
                   <Text style={[styles.priorityText, isSelected && styles.priorityTextActive]}>{config.label}</Text>
                 </TouchableOpacity>
               );
@@ -284,13 +284,19 @@ const TaskDetailScreen = ({ route, navigation }) => {
               <>
                 <Text style={styles.cardHint}>Anexe uma foto para lembrar de um detalhe importante.</Text>
                 <View style={styles.photoActions}>
-                  <TouchableOpacity style={styles.photoActionBtn} onPress={() => pickPhoto(true)}>
-                    <MaterialIcons name="photo-camera" size={20} color={colors.primary} />
-                    <Text style={styles.photoActionText}>Câmera</Text>
+                  <TouchableOpacity
+                    style={[styles.photoActionBtn, { backgroundColor: colors.primaryLight }]}
+                    onPress={() => pickPhoto(true)}
+                  >
+                    <MaterialIcons name="photo-camera" size={30} color={colors.primary} />
+                    <Text style={[styles.photoActionText, { color: colors.primary }]}>Câmera</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.photoActionBtn} onPress={() => pickPhoto(false)}>
-                    <MaterialIcons name="photo-library" size={20} color={colors.primary} />
-                    <Text style={styles.photoActionText}>Galeria</Text>
+                  <TouchableOpacity
+                    style={[styles.photoActionBtn, { backgroundColor: colors.accentLight }]}
+                    onPress={() => pickPhoto(false)}
+                  >
+                    <MaterialIcons name="photo-library" size={30} color={colors.accent} />
+                    <Text style={[styles.photoActionText, { color: colors.accent }]}>Galeria</Text>
                   </TouchableOpacity>
                 </View>
               </>
@@ -300,11 +306,18 @@ const TaskDetailScreen = ({ route, navigation }) => {
           <Text style={styles.sectionLabel}>Localização</Text>
           <View style={styles.card}>
             <View style={styles.locationRow}>
-              <MaterialIcons
-                name={location ? 'place' : 'location-off'}
-                size={24}
-                color={location ? colors.primary : colors.textMuted}
-              />
+              <View
+                style={[
+                  styles.locationIcon,
+                  { backgroundColor: location ? colors.successLight : colors.subtle },
+                ]}
+              >
+                <MaterialIcons
+                  name={location ? 'place' : 'location-off'}
+                  size={24}
+                  color={location ? colors.success : colors.textMuted}
+                />
+              </View>
               <View style={[styles.locationInfo, { marginLeft: 10 }]}>
                 {location ? (
                   <>
@@ -338,7 +351,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
             {location ? (
               <>
                 <TouchableOpacity style={styles.mapLink} onPress={openInMaps}>
-                  <MaterialIcons name="map" size={18} color={colors.accent} />
+                  <MaterialIcons name="map" size={18} color={colors.primary} />
                   <Text style={styles.mapLinkText}>Abrir no mapa</Text>
                 </TouchableOpacity>
                 {renderWeather()}
@@ -351,7 +364,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
               <View style={styles.statusRow}>
                 <MaterialIcons
                   name={completed ? 'check-circle' : 'radio-button-unchecked'}
-                  size={24}
+                  size={30}
                   color={completed ? colors.success : colors.textMuted}
                 />
                 <View style={styles.statusInfo}>

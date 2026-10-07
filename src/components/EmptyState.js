@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
-import { colors } from '../theme/theme';
+import { colors, gradients } from '../theme/theme';
 import { emptyStateStyles as styles } from '../styles/ComponentStyles';
 
 /**
@@ -10,7 +11,9 @@ import { emptyStateStyles as styles } from '../styles/ComponentStyles';
  */
 const EmptyState = ({ icon, title, subtitle }) => (
   <View style={styles.container}>
-    <MaterialIcons name={icon} size={44} color={colors.textMuted} style={styles.icon} />
+    <LinearGradient colors={gradients.soft} style={styles.iconCircle}>
+      <MaterialIcons name={icon} size={44} color={colors.primary} />
+    </LinearGradient>
     <Text style={styles.title}>{title}</Text>
     {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
   </View>
