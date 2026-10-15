@@ -27,7 +27,7 @@
     "@react-native-community/datetimepicker": "8.4.4",
     "expo-file-system": "~19.0.24",
     "expo-notifications": "~0.32.17",
-    "expo-constants": "~18.0.9",
+    "expo-constants": "~18.0.14",
     "expo-secure-store": "~15.0.8"
   },
   "devDependencies": {
