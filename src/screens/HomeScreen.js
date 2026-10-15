@@ -1,12 +1,14 @@
 import React, { useState, useContext, useCallback, useMemo } from 'react';
-import { View, Text, TextInput, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
+import {
+  View, Text, TextInput, FlatList, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AuthContext } from '../context/AuthContext';
-import { getTasks, toggleTask, deleteTask, sortTasks, getStats } from '../services/taskService';
+import { getTasks, toggleTask, deleteTask, sortTasks, getStats, isOverdue } from '../services/taskService';
 import { showAlert, confirmAction } from '../utils/alert';
 import TaskCard from '../components/TaskCard';
 import EmptyState from '../components/EmptyState';
@@ -16,6 +18,7 @@ import { styles } from '../styles/HomeStyles';
 const FILTERS = [
   { key: 'all', label: 'Todas' },
   { key: 'pending', label: 'Pendentes' },
+  { key: 'overdue', label: 'Atrasadas' },
   { key: 'done', label: 'Concluídas' },
 ];
 
@@ -91,12 +94,13 @@ const HomeScreen = ({ navigation }) => {
 
   const stats = useMemo(() => getStats(tasks), [tasks]);
 
-  const filterCounts = { all: stats.total, pending: stats.pending, done: stats.completed };
+  const filterCounts = { all: stats.total, pending: stats.pending, overdue: stats.overdue, done: stats.completed };
 
   const visibleTasks = useMemo(() => {
     const term = search.trim().toLowerCase();
     const filtered = tasks.filter((task) => {
       if (filter === 'pending' && task.completed) return false;
+      if (filter === 'overdue' && !isOverdue(task)) return false;
       if (filter === 'done' && !task.completed) return false;
       if (!term) return true;
       return task.title.toLowerCase().includes(term) || task.description.toLowerCase().includes(term);
@@ -188,7 +192,12 @@ const HomeScreen = ({ navigation }) => {
           ) : null}
         </View>
 
-        <View style={styles.filters}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.filtersScroll}
+          contentContainerStyle={styles.filters}
+        >
           {FILTERS.map(({ key, label }) => {
             const isActive = filter === key;
             return (
@@ -206,7 +215,7 @@ const HomeScreen = ({ navigation }) => {
               </TouchableOpacity>
             );
           })}
-        </View>
+        </ScrollView>
       </View>
 
       {isLoading ? (

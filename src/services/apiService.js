@@ -1,6 +1,7 @@
 /**
  * Integrações com APIs externas (sem necessidade de chave de acesso):
  * - DummyJSON Quotes: frases motivacionais (https://dummyjson.com/docs/quotes)
+ * - MyMemory: tradução das frases para português (https://mymemory.translated.net/doc/spec.php)
  * - Open-Meteo: clima atual na localização da tarefa (https://open-meteo.com)
  *
  * Todas as requisições têm timeout para que o app nunca fique travado
@@ -36,13 +37,37 @@ const OFFLINE_QUOTES = [
 ];
 
 /**
- * Busca uma frase aleatória. Sem conexão, retorna uma frase local.
+ * Traduz um texto do inglês para o português. Se a tradução falhar,
+ * devolve o texto original para não quebrar a tela.
+ * @param {string} text Texto em inglês.
+ * @returns {Promise<string>}
+ */
+const translateToPortuguese = async (text) => {
+  try {
+    const data = await fetchJson(
+      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|pt-BR`
+    );
+    const translated = data?.responseData?.translatedText;
+    // Quando a cota diária acaba, a API responde com um aviso em vez da tradução.
+    if (Number(data?.responseStatus) !== 200 || !translated || translated.includes('MYMEMORY WARNING')) {
+      return text;
+    }
+    return translated;
+  } catch (e) {
+    console.warn('Falha ao traduzir frase, mantendo o original', e);
+    return text;
+  }
+};
+
+/**
+ * Busca uma frase aleatória e a traduz para o português.
+ * Sem conexão, retorna uma frase local.
  * @returns {Promise<{ text: string, author: string, offline: boolean }>}
  */
 export const getRandomQuote = async () => {
   try {
     const data = await fetchJson('https://dummyjson.com/quotes/random');
-    return { text: data.quote, author: data.author, offline: false };
+    return { text: await translateToPortuguese(data.quote), author: data.author, offline: false };
   } catch (e) {
     console.warn('Falha ao buscar frase, usando fallback offline', e);
     const quote = OFFLINE_QUOTES[Math.floor(Math.random() * OFFLINE_QUOTES.length)];

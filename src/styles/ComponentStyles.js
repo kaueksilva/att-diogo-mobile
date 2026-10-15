@@ -147,6 +147,10 @@ export const taskCardStyles = StyleSheet.create({
   cardDone: {
     opacity: 0.55,
   },
+  cardOverdue: {
+    borderLeftWidth: 4,
+    borderLeftColor: colors.danger,
+  },
   checkbox: {
     width: 30,
     height: 30,

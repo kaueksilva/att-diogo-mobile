@@ -66,6 +66,53 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 12,
   },
+  dueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dueText: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 16,
+    fontWeight: '800',
+    color: colors.text,
+  },
+  dueIconBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: colors.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  dueHint: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    marginTop: 10,
+  },
+  dueChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -4,
+  },
+  dueChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 9,
+    paddingHorizontal: 14,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primaryLight,
+    margin: 4,
+  },
+  dueChipAccent: {
+    backgroundColor: colors.primary,
+  },
+  dueChipText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.primary,
+  },
   photo: {
     width: '100%',
     aspectRatio: 4 / 3,
