@@ -9,7 +9,7 @@ import * as Crypto from 'expo-crypto';
  */
 
 /** Quantidade de rodadas de hash para senhas novas. */
-export const PASSWORD_ITERATIONS = 500;
+export const PASSWORD_ITERATIONS = 100;
 
 /** Gera um salt aleatório para o usuário. */
 export const generateSalt = () => Crypto.randomUUID();

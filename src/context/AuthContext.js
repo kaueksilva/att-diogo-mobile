@@ -61,9 +61,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const bootstrap = async () => {
       try {
-        if (!(await findAccount(DEMO_ACCOUNT.email))) {
-          await saveAccount(DEMO_ACCOUNT);
-        }
         let session = await secureGet(SESSION_KEY);
         if (!session) {
           // Migra a sessão de versões antigas para o armazenamento seguro.
@@ -93,7 +90,13 @@ export const AuthProvider = ({ children }) => {
     const invalid = { success: false, message: 'E-mail ou senha incorretos.' };
     try {
       let account = await findAccount(email);
-      if (!account) return invalid;
+      if (!account) {
+        // A conta de teste só é criada no primeiro login com ela, para não atrasar a abertura do app.
+        const isDemo = normalizeEmail(email) === DEMO_ACCOUNT.email && password === DEMO_ACCOUNT.password;
+        if (!isDemo) return invalid;
+        await startSession(await saveAccount(DEMO_ACCOUNT));
+        return { success: true };
+      }
 
       if (account.passwordHash) {
         const iterations = account.iterations || 1;

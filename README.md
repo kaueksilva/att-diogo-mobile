@@ -35,7 +35,7 @@ npx expo start
 | **API externa** | [DummyJSON Quotes](https://dummyjson.com/docs/quotes) (frase do dia), [MyMemory](https://mymemory.translated.net) (tradução da frase para português) e [Open-Meteo](https://open-meteo.com) (clima no local da tarefa). |
 | **Recursos do dispositivo** | 📷 Câmera/galeria (`expo-image-picker`), 📍 GPS + endereço (`expo-location`), 🔔 notificações locais de lembrete (`expo-notifications`), 💾 armazenamento de arquivos (`expo-file-system`). |
 | **Desempenho** | Operações locais instantâneas, atualização otimista ao concluir tarefas, `memo`/`useMemo` na lista, timeout de 8s nas APIs. |
-| **Segurança** | Senhas salvas apenas como **hash SHA-256 com salt** único por usuário e 500 rodadas de *key stretching* (`expo-crypto`); sessão criptografada no Keystore/Keychain (`expo-secure-store`) e sem senha; contas e sessões antigas são migradas automaticamente. |
+| **Segurança** | Senhas salvas apenas como **hash SHA-256 com salt** único por usuário e 100 rodadas de *key stretching* (`expo-crypto`); sessão criptografada no Keystore/Keychain (`expo-secure-store`) e sem senha; contas e sessões antigas são migradas automaticamente. |
 | **Funcionamento offline** | Todo o CRUD é local. Sem internet, a frase do dia usa uma lista local e o clima mostra aviso amigável. |
 | **Tratamento de erros** | `try/catch` em todas as operações de disco, rede e permissões, com mensagens claras ao usuário. |
 | **Documentação** | Este README + JSDoc nos serviços, componentes e telas. |
