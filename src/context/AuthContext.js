@@ -1,18 +1,20 @@
 import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { generateSalt, hashPassword } from '../utils/security';
+import { generateSalt, hashPassword, PASSWORD_ITERATIONS } from '../utils/security';
+import { secureGet, secureSet, secureRemove } from '../utils/secureStorage';
 
 /**
  * Contexto de autenticação.
  * Responsável por cadastro, login, logout, edição de perfil e por manter a
- * sessão do usuário entre aberturas do app (persistida no AsyncStorage).
+ * sessão do usuário entre aberturas do app (persistida no SecureStore).
  *
  * As funções `login` e `register` retornam `{ success, message }` para que as
  * telas exibam a mensagem de erro adequada.
  */
 export const AuthContext = createContext();
 
-const SESSION_KEY = 'user';
+const SESSION_KEY = 'user_session';
+const LEGACY_SESSION_KEY = 'user'; // sessão de versões antigas, guardada no AsyncStorage
 const ACCOUNT_PREFIX = 'registered_user_';
 
 /** Conta de teste criada automaticamente para facilitar a avaliação. */
@@ -36,7 +38,8 @@ const saveAccount = async ({ name, email, password, createdAt }) => {
     name: name.trim(),
     email,
     salt,
-    passwordHash: await hashPassword(password, salt),
+    iterations: PASSWORD_ITERATIONS,
+    passwordHash: await hashPassword(password, salt, PASSWORD_ITERATIONS),
     createdAt: createdAt || new Date().toISOString(),
   };
   await AsyncStorage.setItem(accountKey(email), JSON.stringify(account));
@@ -61,7 +64,15 @@ export const AuthProvider = ({ children }) => {
         if (!(await findAccount(DEMO_ACCOUNT.email))) {
           await saveAccount(DEMO_ACCOUNT);
         }
-        const session = await AsyncStorage.getItem(SESSION_KEY);
+        let session = await secureGet(SESSION_KEY);
+        if (!session) {
+          // Migra a sessão de versões antigas para o armazenamento seguro.
+          session = await AsyncStorage.getItem(LEGACY_SESSION_KEY);
+          if (session) {
+            await secureSet(SESSION_KEY, session);
+            await AsyncStorage.removeItem(LEGACY_SESSION_KEY);
+          }
+        }
         if (session) setUser(JSON.parse(session));
       } catch (e) {
         console.warn('Erro ao restaurar sessão', e);
@@ -74,7 +85,7 @@ export const AuthProvider = ({ children }) => {
 
   const startSession = async (account) => {
     const session = toSession(account);
-    await AsyncStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    await secureSet(SESSION_KEY, JSON.stringify(session));
     setUser(session);
   };
 
@@ -85,8 +96,13 @@ export const AuthProvider = ({ children }) => {
       if (!account) return invalid;
 
       if (account.passwordHash) {
-        const hash = await hashPassword(password, account.salt);
+        const iterations = account.iterations || 1;
+        const hash = await hashPassword(password, account.salt, iterations);
         if (hash !== account.passwordHash) return invalid;
+        if (iterations < PASSWORD_ITERATIONS) {
+          // Conta com hash de rodada única: reforça com o número atual de rodadas.
+          account = await saveAccount({ ...account, password });
+        }
       } else {
         // Conta criada por versão antiga (senha em texto puro): valida e migra para hash.
         if (account.password !== password) return invalid;
@@ -130,7 +146,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useCallback(async () => {
     try {
-      await AsyncStorage.removeItem(SESSION_KEY);
+      await secureRemove(SESSION_KEY);
     } catch (e) {
       console.warn('Erro ao sair', e);
     } finally {

@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { colors, PRIORITIES } from '../theme/theme';
 import { taskCardStyles as styles } from '../styles/ComponentStyles';
+import { isOverdue } from '../services/taskService';
+import { formatDueDate } from '../utils/date';
 
 const Badge = ({ icon, label, color, background }) => (
   <View style={[styles.badge, { backgroundColor: background }]}>
@@ -25,10 +27,11 @@ const Badge = ({ icon, label, color, background }) => (
  */
 const TaskCard = ({ task, onPress, onToggle, onDelete }) => {
   const priority = PRIORITIES[task.priority];
+  const overdue = isOverdue(task);
 
   return (
     <TouchableOpacity
-      style={[styles.card, task.completed && styles.cardDone]}
+      style={[styles.card, overdue && styles.cardOverdue, task.completed && styles.cardDone]}
       onPress={() => onPress(task)}
       activeOpacity={0.85}
       accessibilityLabel={`Tarefa ${task.title}`}
@@ -57,6 +60,14 @@ const TaskCard = ({ task, onPress, onToggle, onDelete }) => {
 
         <View style={styles.badges}>
           <Badge icon="flag" label={priority.label} color={priority.color} background={priority.background} />
+          {task.dueDate ? (
+            <Badge
+              icon={overdue ? 'warning' : 'event'}
+              label={`${overdue ? 'Atrasada · ' : ''}${formatDueDate(task.dueDate)}`}
+              color={overdue ? colors.danger : colors.textBody}
+              background={overdue ? colors.dangerLight : colors.subtle}
+            />
+          ) : null}
           {task.location ? (
             <Badge icon="place" label="Local" color={colors.primary} background={colors.primaryLight} />
           ) : null}

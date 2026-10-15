@@ -11,21 +11,41 @@ import { AuthContext } from '../context/AuthContext';
 import { createTask, updateTask, deleteTask } from '../services/taskService';
 import { persistPhoto, deletePhoto } from '../services/fileService';
 import { getWeather } from '../services/apiService';
+import {
+  remindersSupported, hasReminderPermission, requestReminderPermission,
+} from '../services/notificationService';
 import { showAlert, confirmAction } from '../utils/alert';
+import { formatDueDate, formatDateTime } from '../utils/date';
 import ScreenHeader from '../components/ScreenHeader';
 import FormInput from '../components/FormInput';
 import PrimaryButton from '../components/PrimaryButton';
 import { colors, PRIORITIES } from '../theme/theme';
 import { styles } from '../styles/TaskDetailStyles';
 
+// O seletor nativo de data/hora não existe na Web; lá usamos só os atalhos rápidos.
+const DateTimePicker = Platform.OS === 'web' ? null : require('@react-native-community/datetimepicker');
+
 const TITLE_MAX_LENGTH = 80;
 
-const formatDate = (iso) =>
-  new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+/** Data daqui a `days` dias, no horário `hour` (minutos zerados). */
+const atDayAndHour = (days, hour) => {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  date.setHours(hour, 0, 0, 0);
+  return date;
+};
+
+/** Atalhos para definir o prazo com um toque. */
+const QUICK_DUE_OPTIONS = [
+  { label: 'Em 1 hora', getDate: () => new Date(Math.ceil((Date.now() + 60 * 60 * 1000) / 60000) * 60000) },
+  { label: 'Amanhã 9h', getDate: () => atDayAndHour(1, 9) },
+  { label: 'Em 1 semana', getDate: () => atDayAndHour(7, 9) },
+];
 
 /**
  * Tela de criação e edição de tarefas.
- * Recursos de dispositivo: câmera/galeria (foto anexada) e GPS (localização).
+ * Recursos de dispositivo: câmera/galeria (foto anexada), GPS (localização)
+ * e notificações locais (lembrete no prazo da tarefa).
  * API externa: clima atual no local da tarefa (Open-Meteo).
  */
 const TaskDetailScreen = ({ route, navigation }) => {
@@ -37,6 +57,9 @@ const TaskDetailScreen = ({ route, navigation }) => {
   const [description, setDescription] = useState(existingTask?.description ?? '');
   const [priority, setPriority] = useState(existingTask?.priority ?? 'media');
   const [completed, setCompleted] = useState(existingTask?.completed ?? false);
+  const [dueDate, setDueDate] = useState(existingTask?.dueDate ?? null);
+  const [showIosPicker, setShowIosPicker] = useState(false);
+  const [canNotify, setCanNotify] = useState(null);
   const [photo, setPhoto] = useState(existingTask?.photo ?? null);
   const [location, setLocation] = useState(existingTask?.location ?? null);
   const [titleError, setTitleError] = useState('');
@@ -69,6 +92,58 @@ const TaskDetailScreen = ({ route, navigation }) => {
       isCancelled = true;
     };
   }, [location]);
+
+  // Descobre se as notificações já estão liberadas para mostrar o aviso certo.
+  useEffect(() => {
+    if (remindersSupported) hasReminderPermission().then(setCanNotify);
+  }, []);
+
+  /** Define o prazo e pede permissão de notificação para o lembrete. */
+  const selectDueDate = (date) => {
+    setDueDate(date.toISOString());
+    if (remindersSupported && !canNotify) requestReminderPermission().then(setCanNotify);
+  };
+
+  /** Abre o seletor nativo de data e hora (Android: dois diálogos; iOS: inline). */
+  const openDatePicker = () => {
+    const initial = dueDate ? new Date(dueDate) : atDayAndHour(1, 9);
+
+    if (Platform.OS === 'ios') {
+      if (!dueDate) selectDueDate(initial);
+      setShowIosPicker(true);
+      return;
+    }
+
+    DateTimePicker.DateTimePickerAndroid.open({
+      value: initial,
+      mode: 'date',
+      minimumDate: new Date(),
+      onChange: (dateEvent, pickedDate) => {
+        if (dateEvent.type !== 'set' || !pickedDate) return;
+        DateTimePicker.DateTimePickerAndroid.open({
+          value: pickedDate,
+          mode: 'time',
+          is24Hour: true,
+          onChange: (timeEvent, pickedTime) => {
+            if (timeEvent.type === 'set' && pickedTime) selectDueDate(pickedTime);
+          },
+        });
+      },
+    });
+  };
+
+  const clearDueDate = () => {
+    setDueDate(null);
+    setShowIosPicker(false);
+  };
+
+  /** Texto de ajuda abaixo do prazo, explicando se haverá lembrete. */
+  const getReminderHint = () => {
+    if (new Date(dueDate).getTime() <= Date.now()) return 'Este prazo já passou.';
+    if (!remindersSupported) return 'Lembretes por notificação funcionam no app (Android/iOS).';
+    if (canNotify === false) return 'Ative as notificações do app para receber o lembrete.';
+    return '🔔 Você receberá um lembrete neste horário.';
+  };
 
   /** Abre a câmera ou a galeria e anexa a imagem escolhida. */
   const pickPhoto = async (fromCamera) => {
@@ -152,6 +227,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
         description: description.trim(),
         priority,
         completed,
+        dueDate,
         photo: savedPhoto,
         location,
       };
@@ -265,6 +341,67 @@ const TaskDetailScreen = ({ route, navigation }) => {
                 </TouchableOpacity>
               );
             })}
+          </View>
+
+          <Text style={styles.sectionLabel}>Prazo</Text>
+          <View style={styles.card}>
+            {dueDate ? (
+              <>
+                <View style={styles.dueRow}>
+                  <View style={[styles.locationIcon, { backgroundColor: colors.primaryLight }]}>
+                    <MaterialIcons name="event" size={24} color={colors.primary} />
+                  </View>
+                  <Text style={styles.dueText}>{formatDueDate(dueDate)}</Text>
+                  {DateTimePicker ? (
+                    <TouchableOpacity style={styles.dueIconBtn} onPress={openDatePicker} accessibilityLabel="Alterar prazo">
+                      <MaterialIcons name="edit" size={20} color={colors.primary} />
+                    </TouchableOpacity>
+                  ) : null}
+                  <TouchableOpacity
+                    style={[styles.dueIconBtn, { backgroundColor: colors.dangerLight }]}
+                    onPress={clearDueDate}
+                    accessibilityLabel="Remover prazo"
+                  >
+                    <MaterialIcons name="close" size={20} color={colors.danger} />
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.dueHint}>{getReminderHint()}</Text>
+
+                {Platform.OS === 'ios' && showIosPicker ? (
+                  <>
+                    <DateTimePicker.default
+                      value={new Date(dueDate)}
+                      mode="datetime"
+                      display="inline"
+                      locale="pt-BR"
+                      minimumDate={new Date()}
+                      onChange={(event, date) => date && setDueDate(date.toISOString())}
+                    />
+                    <TouchableOpacity style={styles.mapLink} onPress={() => setShowIosPicker(false)}>
+                      <MaterialIcons name="check" size={18} color={colors.primary} />
+                      <Text style={styles.mapLinkText}>Concluir</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <Text style={styles.cardHint}>Defina um prazo para receber um lembrete.</Text>
+                <View style={styles.dueChips}>
+                  {QUICK_DUE_OPTIONS.map(({ label, getDate }) => (
+                    <TouchableOpacity key={label} style={styles.dueChip} onPress={() => selectDueDate(getDate())}>
+                      <Text style={styles.dueChipText}>{label}</Text>
+                    </TouchableOpacity>
+                  ))}
+                  {DateTimePicker ? (
+                    <TouchableOpacity style={[styles.dueChip, styles.dueChipAccent]} onPress={openDatePicker}>
+                      <MaterialIcons name="calendar-today" size={15} color={colors.white} />
+                      <Text style={[styles.dueChipText, { color: colors.white, marginLeft: 5 }]}>Escolher</Text>
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              </>
+            )}
           </View>
 
           <Text style={styles.sectionLabel}>Foto</Text>
@@ -398,8 +535,8 @@ const TaskDetailScreen = ({ route, navigation }) => {
                 style={styles.deleteBtn}
               />
               <Text style={styles.meta}>
-                Criada em {formatDate(existingTask.createdAt)}
-                {existingTask.updatedAt ? `\nÚltima alteração em ${formatDate(existingTask.updatedAt)}` : ''}
+                Criada em {formatDateTime(existingTask.createdAt)}
+                {existingTask.updatedAt ? `\nÚltima alteração em ${formatDateTime(existingTask.updatedAt)}` : ''}
               </Text>
             </>
           ) : null}

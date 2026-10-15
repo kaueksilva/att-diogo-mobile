@@ -113,9 +113,14 @@ export const styles = StyleSheet.create({
     color: colors.text,
     ...webInputReset,
   },
+  filtersScroll: {
+    marginTop: 12,
+    marginHorizontal: -4,
+  },
   filters: {
     flexDirection: 'row',
-    marginTop: 16,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
   },
   filterChip: {
     flexDirection: 'row',
